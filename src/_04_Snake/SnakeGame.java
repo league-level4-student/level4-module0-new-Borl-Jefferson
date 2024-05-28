@@ -109,8 +109,8 @@ Random r = new Random();
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-System.out.println("first");
-		switch (e.getKeyCode()) {
+
+		/*switch (e.getKeyCode()) {
 
 		case KeyEvent.VK_UP:
 			snake.setDirection(Direction.UP);
@@ -122,7 +122,21 @@ System.out.println("first");
 		case KeyEvent.VK_LEFT:
 			snake.setDirection(Direction.LEFT);
 
-		}
+		}*/
+if(e.getKeyCode()==(87) && snake.isNotOppositeDirection(Direction.UP)) {
+	snake.setDirection(Direction.UP);
+}
+else if(e.getKeyCode()==(68) && snake.isNotOppositeDirection(Direction.RIGHT)) {
+	snake.setDirection(Direction.RIGHT);
+}
+else if(e.getKeyCode()==(83) && snake.isNotOppositeDirection(Direction.DOWN)) {
+	snake.setDirection(Direction.DOWN);
+}
+else if(e.getKeyCode()==(65) && snake.isNotOppositeDirection(Direction.LEFT)) {
+	snake.setDirection(Direction.LEFT);
+}
+
+
 		/*
 		 * Use a switch statement to determine if an arrow key is pressed, and set the
 		 * snake's direction accordingly.
@@ -138,7 +152,7 @@ System.out.println("first");
 		 * Create a new Location object that is set to a random x and y values between 0
 		 * and the WIDTH and HEIGHT variables respectively.
 		 */
-		Location loc = new Location(r.nextInt(WIDTH), r.nextInt(HEIGHT));
+		 foodLocation = new Location(r.nextInt(WIDTH), r.nextInt(HEIGHT));
 
 		/*
 		 * Set the foodLocation equal to the Location object you just created.
@@ -146,7 +160,7 @@ System.out.println("first");
 		 * Hint: Use the snake's isLocationOnSnake method to make sure you don't put the
 		 * food on top of the snake.
 		 */
-		if (snake.isLocationOnSnake(loc)) {
+		if (!snake.isLocationOnSnake(loc)) {
 			foodLocation.equals(loc);
 		}
 	}
@@ -174,14 +188,16 @@ System.out.println("first");
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-
+System.out.println(foodLocation.getX() + " " + foodLocation.getY());
+System.out.println(snake.getHeadLocation().getX() + " " + snake.getHeadLocation().getY());
+System.out.println("---------------------");
 		// Call the snake's update method.
 		snake.update();
 		/*
 		 * If the snake's head is colliding with its own body or out of bounds call the
 		 * gameOver method.
 		 */
-		if (snake.isHeadCollidingWithBody() || snake.isOutOfBounds()) {
+		if (snake.isHeadCollidingWithBody()) {
 			gameOver();
 		}
 
@@ -189,8 +205,10 @@ System.out.println("first");
 		 * If the location of the snake's head is equal to the location of the food,
 		 * feed the snake and randomize the food location.
 		 */
-		if (snake.getHeadLocation() == loc) {
-
+		if (snake.getHeadLocation().getX() == foodLocation.getX() && snake.getHeadLocation().getY() == foodLocation.getY()) {
+snake.feed();
+randomizeFoodLocation();
+System.out.println("FEED");
 		}
 		panel.repaint();
 	}

@@ -8,7 +8,7 @@ import java.util.Iterator;
 public class Snake {
 	public static final Color SNAKE_COLOR = Color.BLUE;
 	public static final int BODY_SIZE = 50;
-
+boolean spawn;
 	private SnakeSegment head;
 	private ArrayList<SnakeSegment> snake;
 
@@ -24,7 +24,13 @@ public class Snake {
 	}
 
 	public void feed() {
-		snake.add(new SnakeSegment(snake.get(0).getLocation(), BODY_SIZE));
+		System.out.println(snake.size());
+		if(snake.size()<2) {
+		snake.add(new SnakeSegment(snake.get(snake.size()-1).getLocation(), BODY_SIZE));
+		}
+		else{
+			spawn = true;
+		}
 	}
 
 	public Location getHeadLocation() {
@@ -34,22 +40,42 @@ public class Snake {
 	public void update() {
 int nextx = head.getLocation().getX();
 int nexty = head.getLocation().getY();
-		/*
+
+/*
 		 * Create variables for the next X and Y location of the snake's head.
 		 * Initialize them to the current X and Y locations.
 		 */
-switch (currentDirection) {
+/*switch (currentDirection) {
 
 case UP:
-	nexty+=1;
+	nexty-=1;
 	System.out.println("fourth");
 case RIGHT:
 	nextx+=1;
 case DOWN:
-	nexty-=1;
+	nexty+=1;
 case LEFT:
 	nextx-=1;
 
+}*/
+if(currentDirection.equals(Direction.UP)) {
+	nexty-=1;
+}
+else if(currentDirection.equals(Direction.RIGHT)) {
+	nextx+=1;
+}
+else if(currentDirection.equals(Direction.DOWN)) {
+	nexty+=1;
+}
+else if(currentDirection.equals(Direction.LEFT)) {
+	nextx-=1;
+}
+if(spawn) {
+	snake.add(new SnakeSegment(snake.get(snake.size()-1).getLocation(), BODY_SIZE));
+spawn =false;
+}
+for (int i=snake.size()-1; i<snake.size(); i++){
+	snake.get(i).setLocation(snake.get(i-snake.size()+1).getLocation());
 }
 		/*
 		 * Use a switch statement to check on the currentDirection of the snake and
@@ -78,9 +104,9 @@ canMove = true;
 	}
 
 	public void setDirection(Direction direction) {
-if(isNotOppositeDirection(direction)) {
+//if(isNotOppositeDirection(direction)) {
 	currentDirection = direction;
-}
+//}
 		/*
 		 * If the passed in direction is not the opposite direction of currentDirection
 		 * and canMove is true, set currentDirection to the passed in direction and
@@ -91,28 +117,30 @@ if(isNotOppositeDirection(direction)) {
 
 	}
 
-	private boolean isNotOppositeDirection(Direction direction) {
+	public boolean isNotOppositeDirection(Direction direction) {
 switch (direction) {
 
 case UP:
 	if(!currentDirection.equals(direction.DOWN)) {
-		currentDirection=direction.UP;
-		System.out.println("third");
+		return true;
 	}
 case RIGHT:
 	if(!currentDirection.equals(direction.LEFT)) {
-		currentDirection=direction.RIGHT;
+		return true;
 	}
 case DOWN:
 	if(!currentDirection.equals(direction.UP)) {
-		currentDirection=direction.DOWN;
+		return true;
 	}
 case LEFT:
 	if(!currentDirection.equals(direction.RIGHT)) {
-		currentDirection=direction.LEFT;
+		return true;
 	}
+default:
+	return false;
 
 }
+
 		/*
 		 * Complete the method so it returns true if the passed in direction is not the
 		 * opposite direction of currentDirection.
@@ -121,7 +149,7 @@ case LEFT:
 		 * this method should return false.
 		 */
 
-		return true;
+		r
 	}
 
 	public void resetLocation() {
@@ -166,7 +194,7 @@ if(head.getLocation().getX()<0) {
 
 	public boolean isHeadCollidingWithBody() {
 for (int i = 0; i < snake.size()-1; i++) {
-	if(head.getLocation()==snake.get(i).getLocation()) {
+	if(head.getLocation().getX()==snake.get(i+1).getLocation().getX() && head.getLocation().getY()==snake.get(i+1).getLocation().getY()) {
 		return true;
 	}
 }
