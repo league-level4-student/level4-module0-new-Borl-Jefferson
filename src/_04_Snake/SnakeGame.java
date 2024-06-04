@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -29,7 +30,7 @@ public class SnakeGame implements ActionListener, KeyListener {
 	 */
 	Location loc;
 	public static final Color BORDER_COLOR = Color.WHITE;
-	public static final Color BACKGROUND_COLOR = Color.BLACK;
+	public static final Color BACKGROUND_COLOR = Color.GRAY;
 	public static final Color FOOD_COLOR = Color.RED;
 	public static final int WIDTH = 15;
 	public static final int HEIGHT = 12;
@@ -41,14 +42,14 @@ public class SnakeGame implements ActionListener, KeyListener {
 	private JPanel panel;
 
 	private Snake snake;
-
+	ArrayList<SnakeSegment> sm;
 	private Timer timer;
 Random r = new Random();
 	private Location foodLocation = new Location(r.nextInt(WIDTH), r.nextInt(HEIGHT));
-
+	
 	public SnakeGame() {
 		snake = new Snake(new Location(WIDTH / 2, HEIGHT / 2));
-
+	sm = snake.snake;
 		window = new JFrame("Snake");
 		panel = new JPanel() {
 			private static final long serialVersionUID = 1L;
@@ -90,7 +91,7 @@ Random r = new Random();
 
 		// Note: Adjust delay here if you want snake to go slower or faster.
 
-		timer.setDelay(250);
+		timer.setDelay(150);
 
 		timer.start();
 	}
@@ -135,6 +136,9 @@ else if(e.getKeyCode()==(83) && snake.isNotOppositeDirection(Direction.DOWN)) {
 else if(e.getKeyCode()==(65) && snake.isNotOppositeDirection(Direction.LEFT)) {
 	snake.setDirection(Direction.LEFT);
 }
+if(e.getKeyCode()==(32)) {
+	snake.feed();
+}
 
 
 		/*
@@ -160,9 +164,10 @@ else if(e.getKeyCode()==(65) && snake.isNotOppositeDirection(Direction.LEFT)) {
 		 * Hint: Use the snake's isLocationOnSnake method to make sure you don't put the
 		 * food on top of the snake.
 		 */
-		if (!snake.isLocationOnSnake(loc)) {
-			foodLocation.equals(loc);
+		if (snake.isLocationOnSnake(foodLocation)) {
+			randomizeFoodLocation();
 		}
+		loc=foodLocation;
 	}
 
 	private void gameOver() {
@@ -170,7 +175,7 @@ else if(e.getKeyCode()==(65) && snake.isNotOppositeDirection(Direction.LEFT)) {
 		// Stop the timer.
 		timer.stop();
 		// Tell the user their snake is dead.
-		JOptionPane.showMessageDialog(null, "your snake died");
+		JOptionPane.showMessageDialog(null, "your snake died | Score: " + sm.size());
 		// Ask the user if they want to play again.
 		String ans = JOptionPane.showInputDialog("Try again? (\"yes\" or \"no\")");
 		if (ans.equals("yes")) {
@@ -200,12 +205,16 @@ System.out.println("---------------------");
 		if (snake.isHeadCollidingWithBody()) {
 			gameOver();
 		}
+		if(snake.isOutOfBounds()) {
+			gameOver();
+		}
 
 		/*
 		 * If the location of the snake's head is equal to the location of the food,
 		 * feed the snake and randomize the food location.
 		 */
 		if (snake.getHeadLocation().getX() == foodLocation.getX() && snake.getHeadLocation().getY() == foodLocation.getY()) {
+snake.feed();
 snake.feed();
 randomizeFoodLocation();
 System.out.println("FEED");

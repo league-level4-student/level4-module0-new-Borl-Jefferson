@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Snake {
-	public static final Color SNAKE_COLOR = Color.BLUE;
+	public static final Color SNAKE_COLOR = Color.GREEN;
 	public static final int BODY_SIZE = 50;
 boolean spawn;
 	private SnakeSegment head;
-	private ArrayList<SnakeSegment> snake;
+	 ArrayList<SnakeSegment> snake;
 
 	private Direction currentDirection;
 
@@ -18,7 +18,7 @@ boolean spawn;
 
 	public Snake(Location location) {
 		snake = new ArrayList<SnakeSegment>();
-		head = new SnakeSegment(location, BODY_SIZE);
+		head = new SnakeSegment(location, BODY_SIZE, 0);
 		snake.add(head);
 		currentDirection = Direction.RIGHT;
 	}
@@ -26,7 +26,7 @@ boolean spawn;
 	public void feed() {
 		System.out.println(snake.size());
 		if(snake.size()<2) {
-		snake.add(new SnakeSegment(snake.get(snake.size()-1).getLocation(), BODY_SIZE));
+		snake.add(new SnakeSegment(snake.get(snake.size()-1).getLocation(), BODY_SIZE, 0));
 		}
 		else{
 			spawn = true;
@@ -58,20 +58,20 @@ case LEFT:
 	nextx-=1;
 
 }*/
-if(currentDirection.equals(Direction.UP)) {
+if(currentDirection.equals(Direction.UP) && isNotOppositeDirection(Direction.UP)) {
 	nexty-=1;
 }
-else if(currentDirection.equals(Direction.RIGHT)) {
+else if(currentDirection.equals(Direction.RIGHT) && isNotOppositeDirection(Direction.RIGHT)) {
 	nextx+=1;
 }
-else if(currentDirection.equals(Direction.DOWN)) {
+else if(currentDirection.equals(Direction.DOWN) && isNotOppositeDirection(Direction.DOWN)) {
 	nexty+=1;
 }
-else if(currentDirection.equals(Direction.LEFT)) {
+else if(currentDirection.equals(Direction.LEFT) && isNotOppositeDirection(Direction.LEFT)) {
 	nextx-=1;
 }
 if(spawn) {
-	snake.add(new SnakeSegment(snake.get(snake.size()-1).getLocation(), BODY_SIZE));
+	snake.add(new SnakeSegment(snake.get(snake.size()-1).getLocation(), BODY_SIZE, 0));
 spawn =false;
 }
 for (int i=snake.size()-1; i<snake.size(); i++){
@@ -118,28 +118,31 @@ canMove = true;
 	}
 
 	public boolean isNotOppositeDirection(Direction direction) {
-switch (direction) {
 
-case UP:
-	if(!currentDirection.equals(direction.DOWN)) {
-		return true;
-	}
-case RIGHT:
-	if(!currentDirection.equals(direction.LEFT)) {
-		return true;
-	}
-case DOWN:
-	if(!currentDirection.equals(direction.UP)) {
-		return true;
-	}
-case LEFT:
-	if(!currentDirection.equals(direction.RIGHT)) {
-		return true;
-	}
-default:
+		if(direction.equals(direction.UP)) {
+			if(!currentDirection.equals(direction.DOWN)) {
+				return true;
+			}
+			}
+			if(direction.equals(direction.LEFT)) {
+			if(!currentDirection.equals(direction.RIGHT)) {
+				return true;
+			}
+			}
+		if(direction.equals(direction.DOWN)) {
+			if(!currentDirection.equals(direction.UP)) {
+				return true;
+			}
+			}
+		if(direction.equals(direction.RIGHT)) {
+			if(!currentDirection.equals(direction.LEFT)) {
+				return true;
+			}
+
+		}
 	return false;
 
-}
+
 
 		/*
 		 * Complete the method so it returns true if the passed in direction is not the
@@ -149,7 +152,7 @@ default:
 		 * this method should return false.
 		 */
 
-		r
+		
 	}
 
 	public void resetLocation() {
@@ -166,19 +169,19 @@ Location reset = new Location(SnakeGame.WIDTH / 2, SnakeGame.HEIGHT / 2);
 		 * Location created in step 2 for the Location and the BODY_SIZE constant for
 		 * the size.
 		 */
-head = new SnakeSegment(reset, BODY_SIZE);
+head = new SnakeSegment(reset, BODY_SIZE, 1);
 		// Add the head to the snake.
 snake.add(head);
 	}
 
 	public boolean isOutOfBounds() {
-if(head.getLocation().getX()>SnakeGame.WIDTH) {
+if(head.getLocation().getX()>SnakeGame.WIDTH-1) {
 	return true;
 }
-if(head.getLocation().getY()>SnakeGame.HEIGHT) {
+if(head.getLocation().getY()>SnakeGame.HEIGHT-1) {
 	return true;
 }
-if(head.getLocation().getX()<0) {
+if(head.getLocation().getY()<0) {
 	return true;
 }
 if(head.getLocation().getX()<0) {
@@ -208,10 +211,11 @@ for (int i = 0; i < snake.size()-1; i++) {
 
 	public boolean isLocationOnSnake(Location loc) {
 		for (int i = 0; i < snake.size(); i++) {
-			if(loc==snake.get(i).getLocation()) {
+			if(loc.getX()==snake.get(i).getLocation().getX() && loc.getY()==snake.get(i).getLocation().getY()) {
 				return true;
 			}
 		}
+		if(loc.getX()==head.getLocation().getX() && loc.getY()==head.getLocation().getY()) {return true;}
 		/*
 		 * Complete the method so it returns true if the passed in location is located
 		 * on the snake.
